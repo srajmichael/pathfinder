@@ -1,0 +1,21 @@
+.node{
+   width: 40px;
+   height: 40px;
+   border: 1px solid;
+   font-size: 12px;
+}
+.start{
+   background: green;
+}
+
+.end{
+   background: red;
+}
+
+.wall{
+   background: black;
+}
+
+.path{
+   background: yellow;
+}
