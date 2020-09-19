@@ -59,7 +59,7 @@ export function getNeighbors(grid, node){
 }
 
 export function getDistanceFromNode(node1, node2, allowDiagonals = false){
-   const rows = Math.abs(node1.row, node2.row);
+   const rows = Math.abs(node1.row - node2.row);
    const cols = Math.abs(node1.col - node2.col);
    return rows + cols;
 }
