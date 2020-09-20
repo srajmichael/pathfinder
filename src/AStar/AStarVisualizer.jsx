@@ -2,92 +2,16 @@ import React, {useState} from 'react';
 
 import Node from './Node/Node';
 import {getDistanceFromNode, astar, getAStarData} from '../algorithms/astar';
+import {
+   getInitialGrid,
+   generateNewGridFromPath,
+   addWallToGrid,
+   START_NODE_ROW,
+   START_NODE_COL,
+   FINISH_NODE_ROW,
+   FINISH_NODE_COL
+} from '../utils/grid';
 import './AStarVisualizer.css'
-
-const NUM_OF_ROWS = 20;
-const NUM_OF_COLS = 20;
-const START_NODE_ROW = 7;
-const START_NODE_COL = 5;
-const FINISH_NODE_ROW = 10;
-const FINISH_NODE_COL = 12;
-const WALL_ROW = 10;
-const WALL_COL = 5;
-
-
-const getInitialGrid = () => {
-   const grid = [];
-   for(let row = 0; row < NUM_OF_ROWS; row++){
-      const currentRow = [];
-      for(let col = 0; col < NUM_OF_COLS; col++){
-         const node = createNode(row,col);
-         currentRow.push(node)
-      }
-      grid.push(currentRow)
-   }
-   return grid;
-}
-
-const createNode = (row,col) => {
-   return {
-      row,
-      col,
-      isWall: false,
-      visited: false,
-      parent: null,
-      gCost: Infinity,
-      hCost: getDistanceFromNode({row,col}, {row: FINISH_NODE_ROW, col: FINISH_NODE_COL}),
-      f: Infinity,
-      pathIndex: null,
-      timeOut: 200,
-      isStart: (row === START_NODE_ROW && col === START_NODE_COL),
-      isEnd: (row ===FINISH_NODE_ROW && col === FINISH_NODE_COL),
-      orderVisited: null,
-      orderTimeOut: 30,
-      numOfNodesVisited: null
-   }
-}
-
-//7,5 6,5 8,5 9,5 8,5 9,5
-// const trueGrid = getInitialGrid();
-// const trueStart = trueGrid[START_NODE_ROW][START_NODE_COL];
-// const trueEnd = trueGrid[FINISH_NODE_ROW][FINISH_NODE_COL];
-// window.addEventListener('click', function(){
-//    astar(trueGrid, trueStart, trueEnd)
-// })
-
-const generateNewGrid = (grid, path) => {
-   const newGrid = [];
-
-   for(let row = 0; row < grid.length; row++){
-      const currentRow = [];
-      for(let col = 0; col < grid[row].length; col++){
-         const node = grid[row][col];
-         currentRow.push(node)
-      }
-      newGrid.push(currentRow)
-   }
-
-   for(let i = 0; i < path.length; i++){
-      const node = newGrid[path[i].row][path[i].col];
-      node.pathIndex = i
-   }
-   return newGrid
-} 
-
-const addWallToGrid = (grid, row, col) => {
-   const newGrid = [];
-
-   for(let row = 0; row < grid.length; row++){
-      const currentRow = [];
-      for(let col = 0; col < grid[row].length; col++){
-         const node = grid[row][col];
-         currentRow.push(node)
-      }
-      newGrid.push(currentRow)
-   }
-   newGrid[row][col].isWall = !newGrid[row][col].isWall;
-   return newGrid;
-}
 
 const AStarVisualizer = () => {
    const [grid, setGrid] = useState( getInitialGrid() );
@@ -111,7 +35,7 @@ const AStarVisualizer = () => {
          n.numOfNodesVisited = orderVisited.length;
       }
 
-      const newGrid = generateNewGrid(grid, path);
+      const newGrid = generateNewGridFromPath(grid, path);
       setGrid(newGrid)
    }
 
