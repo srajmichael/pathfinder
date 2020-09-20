@@ -1,16 +1,23 @@
 const NUM_OF_ROWS = 30;
 const NUM_OF_COLS = 30;
-export const START_NODE_ROW = 7;
-export const START_NODE_COL = 22;
-export const FINISH_NODE_ROW = 20;
-export const FINISH_NODE_COL = 21;
+// export const START_NODE_ROW = 7;
+// export const START_NODE_COL = 22;
+// export const FINISH_NODE_ROW = 20;
+// export const FINISH_NODE_COL = 21;
 
-export const getInitialGrid = () => {
+
+export const getInitialGrid = (config) => {
    const grid = [];
    for(let row = 0; row < NUM_OF_ROWS; row++){
       const currentRow = [];
       for(let col = 0; col < NUM_OF_COLS; col++){
          const node = createNode(row,col);
+         if(config.startNodeRow === row && config.startNodeCol === col){
+            node.isStart = true;
+         }
+         if(config.endNodeRow === row && config.endNodeCol === col){
+            node.isEnd = true;
+         }
          currentRow.push(node)
       }
       grid.push(currentRow)
@@ -19,7 +26,7 @@ export const getInitialGrid = () => {
 }
 
 
-export const createNode = (row,col) => {
+export const createNode = (row,col, config) => {
    return {
       row,
       col,
@@ -27,12 +34,12 @@ export const createNode = (row,col) => {
       visited: false,
       parent: null,
       gCost: Infinity,
-      hCost: getDistanceFromNode({row,col}, {row: FINISH_NODE_ROW, col: FINISH_NODE_COL}),
+      hCost: Infinity,
       f: Infinity,
       pathIndex: null,
-      timeOut: 200,
-      isStart: (row === START_NODE_ROW && col === START_NODE_COL),
-      isEnd: (row ===FINISH_NODE_ROW && col === FINISH_NODE_COL),
+      timeOut: 50,
+      isStart: null,
+      isEnd: null,
       orderVisited: null,
       orderTimeOut: 30,
       numOfNodesVisited: null

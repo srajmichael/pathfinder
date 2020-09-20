@@ -32,6 +32,7 @@ const Node = ({
       setTimeout(function(){
          nodeRef.current.classList.add('visited')
          nodeRef.current.style.background = bg;
+         nodeRef.current.style.borderColor = 'transparent';
       }, to)
    }
 
@@ -41,7 +42,6 @@ const Node = ({
 
    return (
       <div ref={nodeRef} className={nodeClasses} onClick={handleOnClick}>
-         { '' + row + ',' + col }
       </div>
    )
 }

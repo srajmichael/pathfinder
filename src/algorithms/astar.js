@@ -9,8 +9,8 @@ import {
 export function getAStarData(grid, startNode, endNode){
    const openNodes = [startNode];
    const closedNodes = [];
-   const orderVisited = [startNode];
-   let noNodesLeft = false;
+   const orderVisited = [startNode]; //The order of nodes visited from start to finish
+   let noNodesLeft = false; //flag to know if the end node can't be reached
 
    let currentNode = startNode;
 
