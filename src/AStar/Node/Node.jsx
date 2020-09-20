@@ -10,15 +10,29 @@ const Node = ({
    timeOut,
    isStart,
    isEnd,
-   toggleWall
+   toggleWall,
+   orderVisited,
+   orderTimeOut,
+   numOfNodesVisited
 }) => {
    const nodeRef = useRef();
    const nodeClasses = isWall ? 'node wall' : isStart ? 'node start' : isEnd ? 'node end' : 'node';
 
    if(pathIndex || pathIndex === 0){
+      const to = (timeOut * pathIndex) + (orderTimeOut * numOfNodesVisited)
       setTimeout(function(){
          nodeRef.current.classList.add('path')
-      }, (timeOut * pathIndex))
+      }, to)
+   }
+
+   if(orderVisited || orderVisited === 0){
+      const to = (orderTimeOut * orderVisited);
+      const opacity = .4 + (.6 * (orderVisited/numOfNodesVisited))
+      const bg = `rgba(235, 64, 52,${opacity})`
+      setTimeout(function(){
+         nodeRef.current.classList.add('visited')
+         nodeRef.current.style.background = bg;
+      }, to)
    }
 
    const handleOnClick = () => {

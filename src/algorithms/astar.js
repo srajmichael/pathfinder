@@ -1,3 +1,56 @@
+export function getAStarData(grid, startNode, endNode){
+   const openNodes = [startNode];
+   const closedNodes = [];
+   const orderVisited = [startNode];
+   let noNodesLeft = false;
+
+   let currentNode = startNode;
+
+   startNode.gCost = 0;
+   startNode.hCost = getDistanceFromNode(startNode, endNode);
+
+   while(currentNode !== endNode && !noNodesLeft ){
+      const currentNeighbors = getNeighbors(grid, currentNode);
+      if(currentNeighbors.length === 0){
+         noNodesLeft = true;
+         break;
+      }
+
+      for(const neighbor of currentNeighbors){
+         if(closedNodes.indexOf(neighbor) === -1 && openNodes.indexOf(neighbor) === -1){
+            openNodes.push(neighbor);
+            const g = getDistanceFromNode(startNode, neighbor);
+            const h = getDistanceFromNode(endNode, neighbor);
+            const f = g + h;
+            if(f < (neighbor.gCost + neighbor.hCost)){
+               neighbor.gCost = g;
+               neighbor.hCost = h;
+               neighbor.f = f;
+               neighbor.parent = currentNode;
+            }
+         }
+
+         if(orderVisited.indexOf(neighbor) === -1){
+            orderVisited.push(neighbor);
+         }
+
+      }
+      removeFromArray(currentNode, openNodes);
+      closedNodes.push(currentNode);
+      currentNode = getNodeWithLowestF(openNodes);
+   }
+
+   const path = getFinalPath(endNode);
+   return {
+      path: noNodesLeft ? [] : path,
+      orderVisited
+   };
+
+}
+
+
+
+
 export function astar(grid, startNode, endNode){
    const openNodes = [startNode];
    const closedNodes = [];
@@ -9,8 +62,6 @@ export function astar(grid, startNode, endNode){
 
    while(currentNode !== endNode){
       const currentNeighbors = getNeighbors(grid, currentNode);
-
-      console.log(`[${currentNode.row}, ${currentNode.col}]`)
 
       for(const neighbor of currentNeighbors){
          if(closedNodes.indexOf(neighbor) === -1 && openNodes.indexOf(neighbor) === -1){
@@ -50,10 +101,12 @@ export function getNeighbors(grid, node){
    const numOfColumns = grid[0].length;
    const neighbors = [];
    
-   if(node.row > 0){ neighbors.push(grid[node.row - 1][node.col]) }
-   if(node.row < numOfRows - 2){ neighbors.push(grid[node.row + 1][node.col]) }
-   if(node.col > 0){ neighbors.push(grid[node.row][node.col - 1]) }
-   if(node.col < numOfColumns - 2){ neighbors.push(grid[node.row][node.col + 1]) }
+   if(node){
+      if(node.row > 0){ neighbors.push(grid[node.row - 1][node.col]) }
+      if(node.row < numOfRows - 1){ neighbors.push(grid[node.row + 1][node.col]) }
+      if(node.col > 0){ neighbors.push(grid[node.row][node.col - 1]) }
+      if(node.col < numOfColumns - 1){ neighbors.push(grid[node.row][node.col + 1]) }
+   }
 
    return neighbors.filter(neigh => !neigh.isWall);
 }

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 
 import Node from './Node/Node';
-import {getDistanceFromNode, astar} from '../algorithms/astar';
+import {getDistanceFromNode, astar, getAStarData} from '../algorithms/astar';
 import './AStarVisualizer.css'
 
 const NUM_OF_ROWS = 20;
@@ -31,7 +31,7 @@ const createNode = (row,col) => {
    return {
       row,
       col,
-      isWall: ( row === 10 && col === 5 ) || ( row === 9 && col === 6 ) || ( row === 8 && col === 6 ) || ( row === 7 && col === 6 ) || ( row === 6 && col === 6 ) || ( row === 5 && col === 5 ),
+      isWall: false,
       visited: false,
       parent: null,
       gCost: Infinity,
@@ -40,7 +40,10 @@ const createNode = (row,col) => {
       pathIndex: null,
       timeOut: 200,
       isStart: (row === START_NODE_ROW && col === START_NODE_COL),
-      isEnd: (row ===FINISH_NODE_ROW && col === FINISH_NODE_COL)
+      isEnd: (row ===FINISH_NODE_ROW && col === FINISH_NODE_COL),
+      orderVisited: null,
+      orderTimeOut: 30,
+      numOfNodesVisited: null
    }
 }
 
@@ -92,11 +95,22 @@ const AStarVisualizer = () => {
    const [endNode, setEndNode] = useState( grid[FINISH_NODE_ROW][FINISH_NODE_COL] );
 
    const runAStar = (grid, startNode, endNode) => {
-      const path = astar(grid, startNode, endNode);
+      // const path = astar(grid, startNode, endNode);
+
+      const {path, orderVisited} = getAStarData(grid, startNode, endNode);
+      console.log(orderVisited)
+
       for(let i = 0; i < path.length; i++){
          const n = path[i];
          n.pathIndex = i;
       }
+
+      for(let i = 0; i < orderVisited.length; i++){
+         const n = orderVisited[i];
+         n.orderVisited = i;
+         n.numOfNodesVisited = orderVisited.length;
+      }
+
       const newGrid = generateNewGrid(grid, path);
       setGrid(newGrid)
    }
@@ -127,6 +141,9 @@ const AStarVisualizer = () => {
                                     isStart={n.isStart}
                                     isEnd={n.isEnd}
                                     toggleWall={toggleWall}
+                                    orderVisited={n.orderVisited}
+                                    orderTimeOut={n.orderTimeOut}
+                                    numOfNodesVisited={n.numOfNodesVisited}
                                  />
                               )
                            })

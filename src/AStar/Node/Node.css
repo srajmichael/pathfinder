@@ -3,6 +3,7 @@
    height: 40px;
    border: 1px solid;
    font-size: 12px;
+   transition: all 300ms ease;
 }
 .start{
    background: green;
@@ -16,6 +17,10 @@
    background: black;
 }
 
+.visited{
+   /* background: aqua; */
+}
+
 .path{
-   background: yellow;
+   background: yellow!important;
 }
