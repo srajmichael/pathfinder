@@ -9,16 +9,46 @@ import { getAStarData } from '../algorithms/astar'
 
 export const VisualizerContext = React.createContext();
 
-const initialConfig = {
-   startNodeRow: 0,
-   startNodeCol: 3,
-   endNodeRow: 20,
-   endNodeCol: 20,
-   numOfRows: 30,
-   numOfCols: 30
+
+const calculateNumOfRows = (nodeWidth) => {
+   const maxCols = 50;
+   const totalAllowed = parseInt( (window.innerHeight - 200) / nodeWidth );
+   const min = Math.min(maxCols, totalAllowed)
+   return Math.min(maxCols, totalAllowed);
 }
 
+const calculateNumOfCols = (nodeWidth) => {
+   const maxRows = 50;
+   const totalAllowed = parseInt( (window.innerWidth - 32) / nodeWidth );
+   return Math.min(maxRows, totalAllowed);
+}
 
+const calculateNodeWidth = () => {
+   const min = Math.min(window.innerWidth, window.innerHeight - 200);
+   return window.innerWidth <= 1050 ? 30 : 40;
+}
+
+const generateInitialConfig = () => {
+   const nodeWidth = calculateNodeWidth();
+   const numOfRows = calculateNumOfRows(nodeWidth);
+   const numOfCols = calculateNumOfCols(nodeWidth);
+   const row = Math.floor(numOfRows/2);
+   const startCol = Math.floor(numOfCols * .25);
+   const endCol = numOfCols - (startCol + 1);
+   return {
+      startNodeRow: row,
+      startNodeCol: startCol,
+      endNodeRow: row,
+      endNodeCol: endCol,
+      numOfRows,
+      numOfCols,
+      timeOut: 30,
+      orderTimeOut: 10,
+      nodeWidth
+   }
+}
+
+const initialConfig = generateInitialConfig();
 
 const VisualizerContextComponent = (props) => {
    const [config, setConfig] = useState( initialConfig );
@@ -30,14 +60,14 @@ const VisualizerContextComponent = (props) => {
    useEffect(()=>{
       window.addEventListener('mouseup', function(){
          let c = clearMouse();
-         console.log(c)
-         
       })
+      window.updateConfig = function(config){
+         setConfig(config)
+      }
    },[])
 
    useEffect(()=>{
-      const newGrid = getInitialGrid(config);
-      setGrid(newGrid)
+      clearGrid();
    },[config])
 
 
@@ -62,7 +92,6 @@ const VisualizerContextComponent = (props) => {
    }
 
    const clearMouse = () => {
-      console.log(mouseDownForWalls)
       if(mouseDownForStart){ setMouseDownForStart(false) }
       if(mouseDownForEnd){ setMouseDownForEnd(false) }
       if(mouseDownForWalls){ setMouseDownForWalls(false); console.log('clear walls') }

@@ -1,6 +1,4 @@
 .node{
-   width: 30px;
-   height: 30px;
    border: 1px solid;
    font-size: 12px;
    transition: all 300ms ease;

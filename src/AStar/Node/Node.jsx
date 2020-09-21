@@ -6,6 +6,7 @@ import './Node.css';
 const Node = ({
    row,
    col,
+   nodeWidth,
    isWall,
    pathIndex,
    timeOut,
@@ -63,8 +64,14 @@ const Node = ({
    const onSpanDrag = (e) => {
       e.preventDefault()
    }
+
+   const nodeStyles = {
+      width: `${nodeWidth}px`,
+      height: `${nodeWidth}px`
+   }
    return (
       <div 
+         style={nodeStyles}
          onDragOver={(e)=>{onDragOver(e)}}
          onDrop={onDrop}
          ref={nodeRef} 

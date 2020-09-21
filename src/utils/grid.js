@@ -3,7 +3,7 @@ export const getInitialGrid = (config) => {
    for(let row = 0; row < config.numOfRows; row++){
       const currentRow = [];
       for(let col = 0; col < config.numOfCols; col++){
-         const node = createNode(row,col);
+         const node = createNode(row,col, config);
          if(config.startNodeRow === row && config.startNodeCol === col){
             node.isStart = true;
          }
@@ -18,7 +18,7 @@ export const getInitialGrid = (config) => {
 }
 
 
-export const createNode = (row,col) => {
+export const createNode = (row,col, config) => {
    return {
       row,
       col,
@@ -29,11 +29,11 @@ export const createNode = (row,col) => {
       hCost: Infinity,
       f: Infinity,
       pathIndex: null,
-      timeOut: 50,
+      timeOut: config.timeOut,
       isStart: null,
       isEnd: null,
       orderVisited: null,
-      orderTimeOut: 30,
+      orderTimeOut: config.orderTimeOut,
       numOfNodesVisited: null
    }
 }

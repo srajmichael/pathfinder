@@ -7,14 +7,18 @@ import './AStarVisualizer.css'
 const AStarVisualizer = () => {
 
    const {
-      grid, toggleWall, runAStar
+      grid, toggleWall, runAStar, config
    } = useContext(VisualizerContext);
 
+
+   const gridStyles = {
+      width: `${config.numOfCols * config.nodeWidth}px`
+   }
 
    return(
       <div>
          <button onClick={runAStar}>Log It</button>
-         <div className='grid'>
+         <div className='grid' style={gridStyles}>
             {
                grid.map( (row, rowIndex) => {
                   return (
@@ -35,6 +39,7 @@ const AStarVisualizer = () => {
                                     orderVisited={n.orderVisited}
                                     orderTimeOut={n.orderTimeOut}
                                     numOfNodesVisited={n.numOfNodesVisited}
+                                    nodeWidth={config.nodeWidth}
                                  />
                               )
                            })
