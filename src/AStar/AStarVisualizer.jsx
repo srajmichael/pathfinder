@@ -7,7 +7,7 @@ import './AStarVisualizer.css'
 const AStarVisualizer = () => {
 
    const {
-      grid, config, toggleWall, runAStar, updateStartNode, updateEndNode,
+      grid, toggleWall, runAStar
    } = useContext(VisualizerContext);
 
 

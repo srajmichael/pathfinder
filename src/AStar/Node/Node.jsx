@@ -69,9 +69,7 @@ const Node = ({
          onDrop={onDrop}
          ref={nodeRef} 
          className={nodeClasses} 
-         // onClick={handleOnClick} 
          onMouseDown={(e)=>{handleOnMouseDown( isStart ? 'start' : isEnd ? 'end' : 'wall', row, col)}}
-         // onMouseUp={(e)=>{handleOnMouseUp(row,col);}}
          onMouseEnter={(e)=>{handleOnMouseEnter(row, col)}}
       >
          { (isStart || isEnd) && <span draggable onDrag={onSpanDrag}></span>}

@@ -13,7 +13,9 @@ const initialConfig = {
    startNodeRow: 0,
    startNodeCol: 3,
    endNodeRow: 20,
-   endNodeCol: 20
+   endNodeCol: 20,
+   numOfRows: 30,
+   numOfCols: 30
 }
 
 

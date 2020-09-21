@@ -1,11 +1,8 @@
-const NUM_OF_ROWS = 30;
-const NUM_OF_COLS = 30;
-
 export const getInitialGrid = (config) => {
    const grid = [];
-   for(let row = 0; row < NUM_OF_ROWS; row++){
+   for(let row = 0; row < config.numOfRows; row++){
       const currentRow = [];
-      for(let col = 0; col < NUM_OF_COLS; col++){
+      for(let col = 0; col < config.numOfCols; col++){
          const node = createNode(row,col);
          if(config.startNodeRow === row && config.startNodeCol === col){
             node.isStart = true;
