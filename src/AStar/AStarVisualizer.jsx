@@ -2,52 +2,15 @@ import React, {useState, useContext} from 'react';
 
 import Node from './Node/Node';
 import {VisualizerContext} from './VisualizerContext';
-// import {getDistanceFromNode, astar, getAStarData} from '../algorithms/astar';
-import {
-   getInitialGrid,
-   generateNewGridFromPath,
-   addWallToGrid,
-   START_NODE_ROW,
-   START_NODE_COL,
-   FINISH_NODE_ROW,
-   FINISH_NODE_COL
-} from '../utils/grid';
 import './AStarVisualizer.css'
 
 const AStarVisualizer = () => {
-   // const [grid, setGrid] = useState( getInitialGrid() );
-   // const [startNode, setStartNode] = useState( grid[START_NODE_ROW][START_NODE_COL] );
-   // const [endNode, setEndNode] = useState( grid[FINISH_NODE_ROW][FINISH_NODE_COL] );
+
    const {
-      grid, config, toggleWall, runAStar, updateStartNode, updateEndNode
+      grid, config, toggleWall, runAStar, updateStartNode, updateEndNode,
    } = useContext(VisualizerContext);
 
-   // const runAStar = (grid, startNode, endNode) => {
-   //    // const path = astar(grid, startNode, endNode);
 
-   //    const {path, orderVisited} = getAStarData(grid, startNode, endNode);
-   //    console.log(orderVisited)
-
-   //    for(let i = 0; i < path.length; i++){
-   //       const n = path[i];
-   //       n.pathIndex = i;
-   //    }
-
-   //    for(let i = 0; i < orderVisited.length; i++){
-   //       const n = orderVisited[i];
-   //       n.orderVisited = i;
-   //       n.numOfNodesVisited = orderVisited.length;
-   //    }
-
-   //    const newGrid = generateNewGridFromPath(grid, path);
-   //    setGrid(newGrid)
-   // }
-
-   // const toggleWall = (row, col) => {
-   //    const newGrid = addWallToGrid(grid, row, col)
-   //    setGrid(newGrid)
-   // }
-   
    return(
       <div>
          <button onClick={runAStar}>Log It</button>

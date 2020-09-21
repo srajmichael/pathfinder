@@ -1,10 +1,5 @@
 const NUM_OF_ROWS = 30;
 const NUM_OF_COLS = 30;
-// export const START_NODE_ROW = 7;
-// export const START_NODE_COL = 22;
-// export const FINISH_NODE_ROW = 20;
-// export const FINISH_NODE_COL = 21;
-
 
 export const getInitialGrid = (config) => {
    const grid = [];
@@ -26,7 +21,7 @@ export const getInitialGrid = (config) => {
 }
 
 
-export const createNode = (row,col, config) => {
+export const createNode = (row,col) => {
    return {
       row,
       col,
