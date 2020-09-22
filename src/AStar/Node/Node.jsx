@@ -22,7 +22,8 @@ const Node = ({
    const {
       handleOnMouseDown,
       handleOnMouseUp,
-      handleOnMouseEnter
+      handleOnMouseEnter,
+      grid
    } = useContext(VisualizerContext);
 
    if( (pathIndex || pathIndex === 0) && nodeRef.current){
@@ -59,7 +60,7 @@ const Node = ({
    }
    const onDrop = (e) => {
       e.preventDefault()
-      handleOnMouseUp(row,col)
+      handleOnMouseUp(row,col, grid)
    }
    const onSpanDrag = (e) => {
       e.preventDefault()
@@ -71,8 +72,8 @@ const Node = ({
       e.preventDefault();
    }
 
-   const onDragStartEnds = () => {
-
+   const onDragStartEnds = (e) => {
+      console.log('start ends drag')
    }
 
    const nodeStyles = {
@@ -80,17 +81,17 @@ const Node = ({
       height: `${nodeWidth}px`
    }
 
-
-
    return (
       <div 
          style={nodeStyles}
+         onDragEnter={onDragLeave}
+         onDragLeave={onDragLeave}
          onDragOver={(e)=>{onDragOver(e)}}
          onDrop={onDrop}
          onDragStart={ (isStart || isEnd) ? onDragStartEnds : onDragStart}
          ref={nodeRef} 
          className={nodeClasses} 
-         onMouseDown={(e)=>{handleOnMouseDown( isStart ? 'start' : isEnd ? 'end' : 'wall', row, col, isWall); }}
+         onMouseDown={(e)=>{handleOnMouseDown( isStart ? 'start' : isEnd ? 'end' : 'wall', row, col, isWall, grid); }}
          onMouseEnter={(e)=>{handleOnMouseEnter(row, col)}}
       >
          { (isStart || isEnd) && <span draggable onDrag={onSpanDrag}></span>}

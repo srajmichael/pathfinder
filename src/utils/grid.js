@@ -18,11 +18,11 @@ export const getInitialGrid = (config) => {
 }
 
 
-export const createNode = (row,col, config) => {
+export const createNode = (row,col, config, isWall = false) => {
    return {
       row,
       col,
-      isWall: false,
+      isWall: isWall,
       visited: false,
       parent: null,
       gCost: Infinity,
@@ -133,4 +133,24 @@ export function getFinalPath(endNode){
    }
    path.unshift(current);
    return path;
+}
+
+export function generateGridWithWalls(config, oldGrid){
+   const grid = [];
+   for(let row = 0; row < config.numOfRows; row++){
+      const currentRow = [];
+      for(let col = 0; col < config.numOfCols; col++){
+         const node = createNode(row,col, config);
+         if(config.startNodeRow === row && config.startNodeCol === col){
+            node.isStart = true;
+         }
+         if(config.endNodeRow === row && config.endNodeCol === col){
+            node.isEnd = true;
+         }
+         node.isWall = oldGrid[row][col].isWall;
+         currentRow.push(node)
+      }
+      grid.push(currentRow)
+   }
+   return grid;
 }
