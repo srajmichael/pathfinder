@@ -50,103 +50,127 @@ const generateInitialConfig = () => {
 
 const initialConfig = generateInitialConfig();
 
-const VisualizerContextComponent = (props) => {
-   const [config, setConfig] = useState( initialConfig );
-   const [grid, setGrid] = useState( getInitialGrid(config) );
-   const [mouseDownForStart, setMouseDownForStart] = useState(false);
-   const [mouseDownForEnd, setMouseDownForEnd] = useState(false);
-   const [mouseDownForWalls, setMouseDownForWalls] = useState(false);
 
-   useEffect(()=>{
+class VisualizerContextComponent extends React.Component{
+   constructor(props){
+      super(props);
+      this.state = {
+         config: initialConfig,
+         grid: getInitialGrid(initialConfig),
+         mouseDownForStart: false,
+         mouseDownForEnd: false,
+         mouseDownForWalls: false,
+         ranAStar: false
+      }
+   }
+
+   componentDidMount(){
+      const self = this;
       window.addEventListener('mouseup', function(){
-         let c = clearMouse();
+         let c = self.clearMouse();
       })
       window.updateConfig = function(config){
-         setConfig(config)
+         self.setConfig(config)
       }
-   },[])
+      window.clearGrid = function(){
+         self.clearGrid();
+      }
+      window.getConfig = function(){
+         console.log(self.state.config)
+      }
+   }
 
-   useEffect(()=>{
-      clearGrid();
-   },[config])
-
-
-   
-   const handleOnMouseDown = ( type, row, col ) => {
+   handleOnMouseDown = ( type, row, col ) => {
       switch(type){
          case 'start':
-            setMouseDownForStart(true);
-            clearGrid();
+            console.log('start')
+            this.setState({mouseDownForStart: true, grid: getInitialGrid(this.state.config)})
             break;
          case 'end':
-            setMouseDownForEnd(true);
-            clearGrid();
+            this.setState({mouseDownForEnd: true, grid: getInitialGrid(this.state.config)})
             break;
          case 'wall':
-            setMouseDownForWalls(true);
-            toggleWall(row, col);
+            this.setState((prevState)=>{
+               const newState = {mouseDownForWall: true};
+               if(prevState.ranAStar){
+                  newState.grid = getInitialGrid(prevState.config)
+                  newState.ranAStar = false;
+               }
+               return newState;
+            })
             break;
          default:
             break;
       }
    }
 
-   const clearMouse = () => {
-      if(mouseDownForStart){ setMouseDownForStart(false) }
-      if(mouseDownForEnd){ setMouseDownForEnd(false) }
-      if(mouseDownForWalls){ setMouseDownForWalls(false); console.log('clear walls') }
-      setMouseDownForWalls(false);
+   clearMouse = () => {
+      if(this.state.mouseDownForStart){ this.setState({mouseDownForStart: false}) }
+      if(this.state.mouseDownForEnd){ this.setState({mouseDownForEnd: false}) }
+      if(this.state.mouseDownForWalls){ this.setState({mouseDownForWall: false}); console.log('clear walls') }
+      this.setState({mouseDownForWall: false});
       return 'clearMouse'
    }
 
-   const handleOnMouseUp = (row, col) => {
-      if(mouseDownForStart){ updateStartNode(row,col);}
-      if(mouseDownForEnd){ updateEndNode(row, col); }
-      clearMouse();
+   handleOnMouseUp = (row, col) => {
+      if(this.state.mouseDownForStart){ this.updateStartNode(row,col);}
+      if(this.state.mouseDownForEnd){ this.updateEndNode(row, col); }
+      this.clearMouse();
    }
 
-   const handleOnMouseEnter = (row, col) => {
-      if(mouseDownForWalls){
-         toggleWall(row, col);
+   handleOnMouseEnter = (row, col) => {
+      if(this.state.mouseDownForWalls){
+         this.toggleWall(row, col);
       }
       
    }
 
-   const clearGrid = () => {
-      const newGrid = getInitialGrid(config);
-      setGrid(newGrid);
+   clearGrid = () => {
+      console.log(this.state.config)
+      const newGrid = getInitialGrid(this.state.config);
+      this.setState({grid: newGrid, ranAStar: false})
    }
 
-   const updateStartNode = (row, col) => {
-      clearGrid();
-      const newConfig = {...config};
-      newConfig.startNodeRow = row;
-      newConfig.startNodeCol = col;
-      setConfig(newConfig);
+   updateStartNode = (row, col) => {
+      this.setState((prevState)=>{
+         const newState = {...prevState.config};
+         newState.startNodeRow = row;
+         newState.startNodeCol = col;
+         const newGrid = getInitialGrid(newState);
+         return {config: newState, grid: newGrid, ranAStar: false}
+      })
    }
 
-   const updateEndNode = (row, col) => {
-      clearGrid();
-      const newConfig = {...config};
-      newConfig.endNodeRow = row;
-      newConfig.endNodeCol = col;
-      setConfig(newConfig);
-   } 
+   updateEndNode = (row, col) => {
+      console.log('update end', row, col)
+      this.setState((prevState)=>{
+         const newConf = {...prevState.config};
+         newConf.endNodeRow = row;
+         newConf.endNodeCol = col;
+         const newGrid = getInitialGrid(newConf);
+         return {config: newConf, grid: newGrid, ranAStar: false}
+      })
+   }
 
-   const toggleWall = (row, col) => {
+
+
+   toggleWall = (row, col) => {
       let canMakeWall = true;
-      if( row === config.startNodeRow && col === config.startNodeCol ){ canMakeWall = false }
-      if( row === config.endNodeRow && col === config.endNodeCol ){ canMakeWall = false }
+      if( row === this.state.config.startNodeRow && col === this.state.config.startNodeCol ){ canMakeWall = false }
+      if( row === this.state.config.endNodeRow && col === this.state.config.endNodeCol ){ canMakeWall = false }
       if(canMakeWall){
-         const newGrid = addWallToGrid(grid, row, col)
-         setGrid(newGrid)
+         
+         const newGrid = addWallToGrid(this.state.grid, row, col);
+         this.setState({grid: newGrid})
       }
    }
 
-   const runAStar = () => {
-      const startNode = grid[config.startNodeRow][config.startNodeCol];
-      const endNode = grid[config.endNodeRow][config.endNodeCol];
-      const {path, orderVisited} = getAStarData(grid, startNode, endNode);
+
+   runAStar = () => {
+      console.log('run', this.state.config)
+      const startNode = this.state.grid[this.state.config.startNodeRow][this.state.config.startNodeCol];
+      const endNode = this.state.grid[this.state.config.endNodeRow][this.state.config.endNodeCol];
+      const {path, orderVisited} = getAStarData(this.state.grid, startNode, endNode);
       
       for(let i = 0; i < path.length; i++){
          const n = path[i];
@@ -159,18 +183,184 @@ const VisualizerContextComponent = (props) => {
          n.numOfNodesVisited = orderVisited.length;
       }
 
-      const newGrid = generateNewGridFromPath(grid, path);
-      setGrid(newGrid)
+      const newGrid = generateNewGridFromPath(this.state.grid, path);
+      this.setState({grid: newGrid, ranAStar: true})
+      console.log('ran', this.state.config)
    }
 
 
-   return (
-      <VisualizerContext.Provider value={ 
-         {grid, config, toggleWall, runAStar, updateStartNode, updateEndNode, handleOnMouseDown, handleOnMouseUp, handleOnMouseEnter} 
-      }>
-         {props.children}
-      </VisualizerContext.Provider>
-   )
+
+
+
+
+
+   render(){
+      return(
+         <VisualizerContext.Provider value={ 
+            {
+               grid: this.state.grid, 
+               config: this.state.config, 
+               toggleWall: this.toggleWall, 
+               runAStar: this.runAStar, 
+               updateStartNode: this.updateStartNode, 
+               updateEndNode: this.updateEndNode, 
+               handleOnMouseDown: this.handleOnMouseDown, 
+               handleOnMouseUp: this.handleOnMouseUp, 
+               handleOnMouseEnter: this.handleOnMouseEnter
+            } 
+         }>
+            {this.props.children}
+         </VisualizerContext.Provider>
+      )
+   }
 }
+
+
+
+
+
+
+// const VisualizerContextComponent = (props) => {
+//    const [config, setConfig] = useState( initialConfig );
+//    const [grid, setGrid] = useState( getInitialGrid(config) );
+//    const [mouseDownForStart, setMouseDownForStart] = useState(false);
+//    const [mouseDownForEnd, setMouseDownForEnd] = useState(false);
+//    const [mouseDownForWalls, setMouseDownForWalls] = useState(false);
+//    const [ranAStar, setRanAStar] = useState(false);
+
+//    useEffect(()=>{
+//       window.addEventListener('mouseup', function(){
+//          let c = clearMouse();
+//       })
+//       window.updateConfig = function(config){
+//          setConfig(config)
+//       }
+//       window.clearGrid = function(){
+//          clearGrid();
+//       }
+//       window.getConfig = function(){
+//          console.log(config)
+//       }
+//    },[])
+
+//    useEffect(()=>{
+//       clearGrid();
+//    },[config])
+
+
+   
+//    const handleOnMouseDown = ( type, row, col ) => {
+//       switch(type){
+//          case 'start':
+//             console.log('start')
+//             setMouseDownForStart(true);
+//             clearGrid();
+//             break;
+//          case 'end':
+//             setMouseDownForEnd(true);
+//             clearGrid();
+//             break;
+//          case 'wall':
+//             console.log('wall')
+//             if(ranAStar){
+//                console.log('ran it')
+//                clearGrid();
+//             }
+//             setMouseDownForWalls(true);
+//             toggleWall(row, col);
+//             break;
+//          default:
+//             break;
+//       }
+//    }
+
+//    const clearMouse = () => {
+//       if(mouseDownForStart){ setMouseDownForStart(false) }
+//       if(mouseDownForEnd){ setMouseDownForEnd(false) }
+//       if(mouseDownForWalls){ setMouseDownForWalls(false); console.log('clear walls') }
+//       setMouseDownForWalls(false);
+//       return 'clearMouse'
+//    }
+
+//    const handleOnMouseUp = (row, col) => {
+//       if(mouseDownForStart){ updateStartNode(row,col);}
+//       if(mouseDownForEnd){ updateEndNode(row, col); }
+//       clearMouse();
+//    }
+
+//    const handleOnMouseEnter = (row, col) => {
+//       if(mouseDownForWalls){
+//          toggleWall(row, col);
+//       }
+      
+//    }
+
+//    const clearGrid = () => {
+//       console.log(config)
+//       const newGrid = getInitialGrid(config);
+//       setGrid(newGrid);
+//       setRanAStar(false);
+//    }
+
+//    const updateStartNode = (row, col) => {
+//       console.log('update start')
+//       clearGrid();
+//       const newConfig = {...config};
+//       newConfig.startNodeRow = row;
+//       newConfig.startNodeCol = col;
+//       setConfig(newConfig);
+//    }
+
+//    const updateEndNode = (row, col) => {
+//       console.log('update end')
+//       clearGrid();
+//       const newConfig = {...config};
+//       newConfig.endNodeRow = row;
+//       newConfig.endNodeCol = col;
+//       setConfig(newConfig);
+//    } 
+
+//    const toggleWall = (row, col) => {
+//       let canMakeWall = true;
+//       if( row === config.startNodeRow && col === config.startNodeCol ){ canMakeWall = false }
+//       if( row === config.endNodeRow && col === config.endNodeCol ){ canMakeWall = false }
+//       if(canMakeWall){
+//          const newGrid = addWallToGrid(grid, row, col)
+//          setGrid(newGrid)
+//       }
+//    }
+
+//    const runAStar = () => {
+//       console.log('run', config)
+//       const startNode = grid[config.startNodeRow][config.startNodeCol];
+//       const endNode = grid[config.endNodeRow][config.endNodeCol];
+//       const {path, orderVisited} = getAStarData(grid, startNode, endNode);
+      
+//       for(let i = 0; i < path.length; i++){
+//          const n = path[i];
+//          n.pathIndex = i;
+//       }
+
+//       for(let i = 0; i < orderVisited.length; i++){
+//          const n = orderVisited[i];
+//          n.orderVisited = i;
+//          n.numOfNodesVisited = orderVisited.length;
+//       }
+
+//       const newGrid = generateNewGridFromPath(grid, path);
+//       setGrid(newGrid);
+//       setRanAStar(true);
+//       console.log('ran', config)
+//    }
+
+
+//    return (
+//       <VisualizerContext.Provider value={ 
+//          {grid, config, toggleWall, runAStar, updateStartNode, updateEndNode, handleOnMouseDown, handleOnMouseUp, handleOnMouseEnter} 
+//       }>
+//          {props.children}
+//       </VisualizerContext.Provider>
+//    )
+// }
 
 export default VisualizerContextComponent;

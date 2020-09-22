@@ -26,8 +26,14 @@ const AStarVisualizer = () => {
                         {
                            row.map( (col, colIndex) => {
                               const n = grid[rowIndex][colIndex];
+                              const keyOrder = n.orderVisited ? n.orderVisited : '';
+                              const keyPath = n.pathIndex ? n.pathIndex : '';
+                              const keyWall = n.isWall ? 'wall' : '';
+                              const nKey = `r${rowIndex}c${colIndex}`;
+
                               return (
                                  <Node 
+                                    key={nKey}
                                     row={rowIndex}
                                     col={colIndex}
                                     isWall={n.isWall}

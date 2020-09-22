@@ -69,6 +69,9 @@ const Node = ({
       width: `${nodeWidth}px`,
       height: `${nodeWidth}px`
    }
+
+
+
    return (
       <div 
          style={nodeStyles}
@@ -76,7 +79,7 @@ const Node = ({
          onDrop={onDrop}
          ref={nodeRef} 
          className={nodeClasses} 
-         onMouseDown={(e)=>{handleOnMouseDown( isStart ? 'start' : isEnd ? 'end' : 'wall', row, col)}}
+         onMouseDown={(e)=>{handleOnMouseDown( isStart ? 'start' : isEnd ? 'end' : 'wall', row, col); }}
          onMouseEnter={(e)=>{handleOnMouseEnter(row, col)}}
       >
          { (isStart || isEnd) && <span draggable onDrag={onSpanDrag}></span>}
