@@ -64,6 +64,16 @@ const Node = ({
    const onSpanDrag = (e) => {
       e.preventDefault()
    }
+   const onDragLeave = (e) => {
+      e.preventDefault();
+   }
+   const onDragStart = (e) => {
+      e.preventDefault();
+   }
+
+   const onDragStartEnds = () => {
+
+   }
 
    const nodeStyles = {
       width: `${nodeWidth}px`,
@@ -77,9 +87,10 @@ const Node = ({
          style={nodeStyles}
          onDragOver={(e)=>{onDragOver(e)}}
          onDrop={onDrop}
+         onDragStart={ (isStart || isEnd) ? onDragStartEnds : onDragStart}
          ref={nodeRef} 
          className={nodeClasses} 
-         onMouseDown={(e)=>{handleOnMouseDown( isStart ? 'start' : isEnd ? 'end' : 'wall', row, col); }}
+         onMouseDown={(e)=>{handleOnMouseDown( isStart ? 'start' : isEnd ? 'end' : 'wall', row, col, isWall); }}
          onMouseEnter={(e)=>{handleOnMouseEnter(row, col)}}
       >
          { (isStart || isEnd) && <span draggable onDrag={onSpanDrag}></span>}

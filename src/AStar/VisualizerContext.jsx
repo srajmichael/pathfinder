@@ -60,7 +60,9 @@ class VisualizerContextComponent extends React.Component{
          mouseDownForStart: false,
          mouseDownForEnd: false,
          mouseDownForWalls: false,
-         ranAStar: false
+         ranAStar: false,
+         wiggle: false,
+
       }
    }
 
@@ -80,10 +82,9 @@ class VisualizerContextComponent extends React.Component{
       }
    }
 
-   handleOnMouseDown = ( type, row, col ) => {
+   handleOnMouseDown = ( type, row, col, isWall ) => {
       switch(type){
          case 'start':
-            console.log('start')
             this.setState({mouseDownForStart: true, grid: getInitialGrid(this.state.config)})
             break;
          case 'end':
@@ -91,11 +92,13 @@ class VisualizerContextComponent extends React.Component{
             break;
          case 'wall':
             this.setState((prevState)=>{
-               const newState = {mouseDownForWall: true};
+               console.log(isWall)
+               const newState = {mouseDownForWalls: true, grid: prevState.grid};
                if(prevState.ranAStar){
-                  newState.grid = getInitialGrid(prevState.config)
+                  newState.grid = getInitialGrid(prevState.config);
                   newState.ranAStar = false;
                }
+               newState.grid[row][col].isWall = !isWall;
                return newState;
             })
             break;
@@ -105,10 +108,15 @@ class VisualizerContextComponent extends React.Component{
    }
 
    clearMouse = () => {
-      if(this.state.mouseDownForStart){ this.setState({mouseDownForStart: false}) }
-      if(this.state.mouseDownForEnd){ this.setState({mouseDownForEnd: false}) }
-      if(this.state.mouseDownForWalls){ this.setState({mouseDownForWall: false}); console.log('clear walls') }
-      this.setState({mouseDownForWall: false});
+      this.setState({
+         mouseDownForStart: false,
+         mouseDownForEnd: false,
+         mouseDownForWalls: false
+      })
+      // if(this.state.mouseDownForStart){ this.setState({mouseDownForStart: false}) }
+      // if(this.state.mouseDownForEnd){ this.setState({mouseDownForEnd: false}) }
+      // if(this.state.mouseDownForWalls){ this.setState({mouseDownForWalls: false}); console.log('clear walls') }
+      // this.setState({mouseDownForWall: false});
       return 'clearMouse'
    }
 
@@ -122,11 +130,13 @@ class VisualizerContextComponent extends React.Component{
       if(this.state.mouseDownForWalls){
          this.toggleWall(row, col);
       }
-      
+      // this.setState((prevState)=>{
+      //    console.log('enter state')
+      //    return{wiggle: !prevState.wiggle}
+      // })
    }
 
    clearGrid = () => {
-      console.log(this.state.config)
       const newGrid = getInitialGrid(this.state.config);
       this.setState({grid: newGrid, ranAStar: false})
    }
@@ -142,7 +152,6 @@ class VisualizerContextComponent extends React.Component{
    }
 
    updateEndNode = (row, col) => {
-      console.log('update end', row, col)
       this.setState((prevState)=>{
          const newConf = {...prevState.config};
          newConf.endNodeRow = row;
@@ -167,7 +176,6 @@ class VisualizerContextComponent extends React.Component{
 
 
    runAStar = () => {
-      console.log('run', this.state.config)
       const startNode = this.state.grid[this.state.config.startNodeRow][this.state.config.startNodeCol];
       const endNode = this.state.grid[this.state.config.endNodeRow][this.state.config.endNodeCol];
       const {path, orderVisited} = getAStarData(this.state.grid, startNode, endNode);
@@ -185,7 +193,6 @@ class VisualizerContextComponent extends React.Component{
 
       const newGrid = generateNewGridFromPath(this.state.grid, path);
       this.setState({grid: newGrid, ranAStar: true})
-      console.log('ran', this.state.config)
    }
 
 
