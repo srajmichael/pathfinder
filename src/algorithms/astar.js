@@ -5,36 +5,42 @@ import {
    getFinalPath
 } from '../utils/grid';
 
-
 export function getAStarData(grid, startNode, endNode){
    const openNodes = [startNode];
    const closedNodes = [];
-   const orderVisited = [startNode]; //The order of nodes visited from start to finish
-   let noNodesLeft = false; //flag to know if the end node can't be reached
+   const orderVisited = [];
 
-   let currentNode = startNode;
+   startNode.g = 0;
+   startNode.h = getDistanceFromNode(startNode, endNode);
+   while(openNodes.length > 0){
+      let current = getNodeWithLowestF(openNodes);
 
-   startNode.gCost = 0;
-   startNode.hCost = getDistanceFromNode(startNode, endNode);
-
-   while(currentNode !== endNode && !noNodesLeft ){
-      const currentNeighbors = getNeighbors(grid, currentNode);
-      if(currentNeighbors.length === 0){
-         noNodesLeft = true;
-         break;
+      if(current === endNode){
+         const path = getFinalPath(endNode);
+         return {
+            path: path,
+            orderVisited,
+            finished: true
+         };
       }
+      //remove current from openNodes and add to closedNodes
+      removeFromArray(current, openNodes);
+      closedNodes.push(current);
 
-      for(const neighbor of currentNeighbors){
-         if(closedNodes.indexOf(neighbor) === -1 && openNodes.indexOf(neighbor) === -1){
-            openNodes.push(neighbor);
-            const g = getDistanceFromNode(startNode, neighbor);
-            const h = getDistanceFromNode(endNode, neighbor);
-            const f = g + h;
-            if(f < (neighbor.gCost + neighbor.hCost)){
-               neighbor.gCost = g;
-               neighbor.hCost = h;
-               neighbor.f = f;
-               neighbor.parent = currentNode;
+      let neighbors = getNeighbors(grid, current);
+      for(let i = 0; i < neighbors.length; i++){
+         const neighbor = neighbors[i];
+         let tempG = current.g + getDistanceFromNode(current, neighbor);
+
+         if( tempG < neighbor.g ){
+            let h = getDistanceFromNode(endNode, neighbor);
+            neighbor.parent = current;
+            neighbor.g = tempG;
+            neighbor.h = h
+            neighbor.f = tempG + h;
+            
+            if(openNodes.indexOf(neighbor) === -1){
+               openNodes.push(neighbor);
             }
          }
 
@@ -43,56 +49,56 @@ export function getAStarData(grid, startNode, endNode){
          }
 
       }
-      removeFromArray(currentNode, openNodes);
-      closedNodes.push(currentNode);
-      currentNode = getNodeWithLowestF(openNodes);
+
    }
-
-   const path = getFinalPath(endNode);
    return {
-      path: noNodesLeft ? [] : path,
-      orderVisited
+      path: [],
+      orderVisited,
+      finished: false
    };
-
 }
-
-
-
 
 export function astar(grid, startNode, endNode){
    const openNodes = [startNode];
    const closedNodes = [];
-
-   let currentNode = startNode;
    
-   startNode.gCost = 0;
-   startNode.hCost = getDistanceFromNode(startNode, endNode);
+   startNode.g = 0;
+   startNode.h = getDistanceFromNode(startNode, endNode);
+   while(openNodes.length > 0){
+      let current = getNodeWithLowestF(openNodes);
 
-   while(currentNode !== endNode){
-      const currentNeighbors = getNeighbors(grid, currentNode);
+      if(current === endNode){
+         const path = getFinalPath(endNode);
+         return path;
+      }
+      //remove current from openNodes and add to closedNodes
+      removeFromArray(current, openNodes);
+      closedNodes.push(current);
 
-      for(const neighbor of currentNeighbors){
-         if(closedNodes.indexOf(neighbor) === -1 && openNodes.indexOf(neighbor) === -1){
-            openNodes.push(neighbor);
-            const g = getDistanceFromNode(startNode, neighbor);
-            const h = getDistanceFromNode(endNode, neighbor);
-            const f = g + h;
-            if(f < (neighbor.gCost + neighbor.hCost)){
-               neighbor.gCost = g;
-               neighbor.hCost = h;
-               neighbor.f = f;
-               neighbor.parent = currentNode;
+      let neighbors = getNeighbors(grid, current);
+      for(let i = 0; i < neighbors.length; i++){
+         const neighbor = neighbors[i];
+         let tempG = current.g + getDistanceFromNode(current, neighbor);
+
+         if( tempG < neighbor.g ){
+            let h = getDistanceFromNode(endNode, neighbor);
+            neighbor.parent = current;
+            neighbor.g = tempG;
+            neighbor.h = h
+            neighbor.f = tempG + h;
+            
+            if(openNodes.indexOf(neighbor) === -1){
+               openNodes.push(neighbor);
             }
          }
       }
-      removeFromArray(currentNode, openNodes);
-      closedNodes.push(currentNode);
-      currentNode = getNodeWithLowestF(openNodes);
-   }
 
-   const path = getFinalPath(endNode);
-   return path;
+   }
+   return [];
 }
+
+
+
 
 export function removeFromArray(item, array){
    const i = array.indexOf(item);

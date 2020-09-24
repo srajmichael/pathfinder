@@ -25,8 +25,8 @@ export const createNode = (row,col, config, isWall = false) => {
       isWall: isWall,
       visited: false,
       parent: null,
-      gCost: Infinity,
-      hCost: Infinity,
+      g: Infinity,
+      h: Infinity,
       f: Infinity,
       pathIndex: null,
       timeOut: config.timeOut,
@@ -100,8 +100,8 @@ export function getNeighbors(grid, node){
 }
 
 export function getDistanceFromNode(node1, node2, allowDiagonals = false){
-   const rows = Math.abs(node1.row - node2.row);
-   const cols = Math.abs(node1.col - node2.col);
+   const rows = Math.abs((node1.row+1) - (node2.row+1));
+   const cols = Math.abs((node1.col+1) - (node2.col+1));
    return rows + cols;
 }
 

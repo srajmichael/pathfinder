@@ -2,6 +2,7 @@ import React, {useState, useContext} from 'react';
 
 import Node from './Node/Node';
 import {VisualizerContext} from './VisualizerContext';
+import VisualizerButton from '../components/VisualizerButton';
 import './AStarVisualizer.css'
 
 const AStarVisualizer = () => {
@@ -17,7 +18,7 @@ const AStarVisualizer = () => {
 
    return(
       <div>
-         <button onClick={runAStar}>Log It</button>
+         <VisualizerButton buttonText='Visualize A*' onClick={runAStar}/>
          <div className='grid' style={gridStyles}>
             {
                grid.map( (row, rowIndex) => {

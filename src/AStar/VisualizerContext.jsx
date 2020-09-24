@@ -157,6 +157,7 @@ class VisualizerContextComponent extends React.Component{
             return {config: newConf, grid: newGrid, ranAStar: false}
          })
       }
+
    }
 
    updateEndNode = (row, col, currentGrid) => {
