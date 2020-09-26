@@ -1,24 +1,25 @@
-import React, {useRef, useContext} from 'react';
+import React, {useState, useRef, useContext} from 'react';
+import { useEffect } from 'react';
 
 import {VisualizerContext} from '../VisualizerContext';
 import './Node.css';
 
-const Node = ({
-   row,
-   col,
-   nodeWidth,
-   isWall,
-   pathIndex,
-   timeOut,
-   isStart,
-   isEnd,
-   toggleWall,
-   orderVisited,
-   orderTimeOut,
-   numOfNodesVisited
-}) => {
-   const nodeRef = useRef();
-   const nodeClasses = isWall ? 'node wall' : isStart ? 'node start' : isEnd ? 'node end' : 'node';
+const Node = (props) => {
+   const {
+      row,
+      col,
+      nodeWidth,
+      isWall,
+      pathIndex,
+      timeOut,
+      isStart,
+      isEnd,
+      toggleWall,
+      orderVisited,
+      orderTimeOut,
+      numOfNodesVisited
+   } = props;
+
    const {
       handleOnMouseDown,
       handleOnMouseUp,
@@ -26,29 +27,56 @@ const Node = ({
       grid
    } = useContext(VisualizerContext);
 
-   if( (pathIndex || pathIndex === 0) && nodeRef.current){
-      const to = (timeOut * pathIndex) + (orderTimeOut * numOfNodesVisited)
-      setTimeout(function(){
-         nodeRef.current.classList.add('path')
-      }, to)
-   }else if(nodeRef.current){
-      nodeRef.current.classList.remove('path')
-   }
+   const nodeRef = useRef();
+   const [color, setColor] = useState('rgba(235, 64, 52, 0)');
+   const [pathTimeout, setPathTimeout] = useState(null);
+   const [orderTimeout, setOrderTimeout] = useState(null);
 
-   if((orderVisited || orderVisited === 0) && nodeRef.current){
-      const to = (orderTimeOut * orderVisited);
-      const opacity = .4 + (.6 * (orderVisited/numOfNodesVisited))
-      const bg = `rgba(235, 64, 52,${opacity})`
-      setTimeout(function(){
-         nodeRef.current.classList.add('visited')
-         nodeRef.current.style.background = bg;
-         nodeRef.current.style.borderColor = 'transparent';
-      }, to)
-   }else if(nodeRef.current){
-      nodeRef.current.classList.remove('visited')
-      nodeRef.current.style.background = '';
-      nodeRef.current.style.borderColor = '';
-   }
+   
+   const nodeClasses = isWall ? 'node wall' : isStart ? 'node start' : isEnd ? 'node end' : 'node';
+
+   useEffect(()=>{
+      if(nodeRef.current){
+         if((pathIndex || pathIndex === 0)){
+            const tO = (timeOut * pathIndex) + (orderTimeOut * numOfNodesVisited)
+            const tOP = setTimeout(()=>{
+               nodeRef.current.classList.add('path');
+               setPathTimeout(null);
+            }, tO);
+            setPathTimeout(tOP);
+         }else if(pathTimeout){
+            clearTimeout(pathTimeout);
+            setPathTimeout(null);
+            nodeRef.current.classList.remove('path');
+         }else{
+            nodeRef.current.classList.remove('path');
+         }
+
+         if(orderVisited || orderVisited === 0){
+            const to = (orderTimeOut * orderVisited);
+            const opacity = .4 + (.6 * (orderVisited/numOfNodesVisited));
+            const bg = `rgba(235, 64, 52,${opacity})`;
+            const tOo = setTimeout(()=>{
+               nodeRef.current.classList.add('visited')
+               nodeRef.current.style.background = bg;
+               nodeRef.current.style.borderColor = 'transparent';
+               setOrderTimeout(null);
+            }, to);
+            setOrderTimeout(tOo);
+         }else if(orderTimeout){
+            clearTimeout(orderTimeout);
+            setOrderTimeout(null);
+            nodeRef.current.classList.remove('visited')
+            nodeRef.current.style.background = '';
+            nodeRef.current.style.borderColor = '';
+         }else{
+            nodeRef.current.classList.remove('visited')
+            nodeRef.current.style.background = '';
+            nodeRef.current.style.borderColor = '';
+         }
+      }
+
+   }, [orderVisited, pathIndex])
 
    const handleOnClick = () => {
       toggleWall(row,col)
@@ -73,7 +101,6 @@ const Node = ({
    }
 
    const onDragStartEnds = (e) => {
-      console.log('start ends drag')
    }
 
    const nodeStyles = {

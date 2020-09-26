@@ -141,6 +141,8 @@ export function generateGridWithWalls(config, oldGrid){
       const currentRow = [];
       for(let col = 0; col < config.numOfCols; col++){
          const node = createNode(row,col, config);
+         node.pathIndex = null;
+         node.orderVisited = null;
          if(config.startNodeRow === row && config.startNodeCol === col){
             node.isStart = true;
          }

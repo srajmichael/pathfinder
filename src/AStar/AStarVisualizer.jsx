@@ -8,7 +8,7 @@ import './AStarVisualizer.css'
 const AStarVisualizer = () => {
 
    const {
-      grid, toggleWall, runAStar, config
+      grid, toggleWall, runAStar, config, clearGrid
    } = useContext(VisualizerContext);
 
 
@@ -19,11 +19,12 @@ const AStarVisualizer = () => {
    return(
       <div>
          <VisualizerButton buttonText='Visualize A*' onClick={runAStar}/>
+         <button onClick={clearGrid}>clear</button>
          <div className='grid' style={gridStyles}>
             {
                grid.map( (row, rowIndex) => {
                   return (
-                     <div className='row'>
+                     <div key={ 'row' + rowIndex } className='row'>
                         {
                            row.map( (col, colIndex) => {
                               const n = grid[rowIndex][colIndex];

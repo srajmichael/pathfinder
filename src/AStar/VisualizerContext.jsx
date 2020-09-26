@@ -60,14 +60,13 @@ class VisualizerContextComponent extends React.Component{
          mouseDownForEnd: false,
          mouseDownForWalls: false,
          ranAStar: false
-
       }
    }
 
    componentDidMount(){
       const self = this;
       window.addEventListener('mouseup', function(){
-         let c = self.clearMouse();
+         let c = self.clearMouse(); 
       })
       window.updateConfig = function(config){
          self.setConfig(config)
@@ -83,18 +82,28 @@ class VisualizerContextComponent extends React.Component{
    handleOnMouseDown = ( type, row, col, isWall, grid ) => {
       switch(type){
          case 'start':
-            this.setState({mouseDownForStart: true, grid: generateGridWithWalls(this.state.config, grid)})
+            this.setState({
+               mouseDownForStart: true,
+                  grid: generateGridWithWalls(this.state.config, grid)
+               })
             // this.setState({mouseDownForStart: true, grid: getInitialGrid(this.state.config)})
             break;
          case 'end':
-            this.setState({mouseDownForEnd: true, grid: generateGridWithWalls(this.state.config, grid)})
+            this.setState({
+               mouseDownForEnd: true, 
+               grid: generateGridWithWalls(this.state.config, grid)
+            })
             // this.setState({mouseDownForEnd: true, grid: getInitialGrid(this.state.config)})
             break;
          case 'wall':
             this.setState((prevState)=>{
-               const newState = {mouseDownForWalls: true, grid: prevState.grid};
+               const newState = {
+                  mouseDownForWalls: true, 
+                  grid: prevState.grid
+               };
                if(prevState.ranAStar){
-                  newState.grid = getInitialGrid(prevState.config);
+                  // newState.grid = getInitialGrid(prevState.config);
+                  newState.grid =generateGridWithWalls(prevState.config, grid);
                   newState.ranAStar = false;
                }
                newState.grid[row][col].isWall = !isWall;
@@ -104,6 +113,7 @@ class VisualizerContextComponent extends React.Component{
          default:
             break;
       }
+      
    }
 
    clearMouse = () => {
@@ -115,14 +125,19 @@ class VisualizerContextComponent extends React.Component{
    }
 
    handleOnMouseUp = (row, col, grid) => {
-      if(this.state.mouseDownForStart){ this.updateStartNode(row,col,grid);}
-      if(this.state.mouseDownForEnd){ this.updateEndNode(row, col, grid); }
-      this.clearMouse();
+      if(!this.state.mouseDownDuringRunning){
+         if(this.state.mouseDownForStart){ this.updateStartNode(row,col,grid);}
+         if(this.state.mouseDownForEnd){ this.updateEndNode(row, col, grid); }
+         this.clearMouse();
+      }
+
    }
 
    handleOnMouseEnter = (row, col) => {
-      if(this.state.mouseDownForWalls){
-         this.toggleWall(row, col);
+      if(!this.state.mouseDownDuringRunning){
+         if(this.state.mouseDownForWalls){
+            this.toggleWall(row, col);
+         }
       }
    }
 
@@ -204,7 +219,7 @@ class VisualizerContextComponent extends React.Component{
       }
 
       const newGrid = generateNewGridFromPath(this.state.grid, path);
-      this.setState({grid: newGrid, ranAStar: true})
+      this.setState({grid: newGrid, ranAStar: true});
    }
 
    render(){
@@ -219,7 +234,8 @@ class VisualizerContextComponent extends React.Component{
                updateEndNode: this.updateEndNode, 
                handleOnMouseDown: this.handleOnMouseDown, 
                handleOnMouseUp: this.handleOnMouseUp, 
-               handleOnMouseEnter: this.handleOnMouseEnter
+               handleOnMouseEnter: this.handleOnMouseEnter,
+               clearGrid: this.clearGrid
             } 
          }>
             {this.props.children}
