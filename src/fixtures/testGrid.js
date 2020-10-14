@@ -189,3 +189,13 @@ export const testGridConfig = {
    orderTimeOut: 10,
    nodeWidth: 20
 }
+
+export const testGridSingleNode = [
+   [
+      {
+         row: 0,
+         col: 0,
+         isWall: false
+      }
+   ]
+]

@@ -1,3 +1,10 @@
+
+function deepCopyGrid(grid){
+   const newGrid = [];
+
+}
+
+
 export const getInitialGrid = (config) => {
    const grid = [];
    for(let row = 0; row < config.numOfRows; row++){
@@ -60,16 +67,19 @@ export const generateNewGridFromPath = (grid, path) => {
 
 export const addWallToGrid = (grid, row, col) => {
    const newGrid = [];
-
+   console.log(grid)
    for(let row = 0; row < grid.length; row++){
       const currentRow = [];
       for(let col = 0; col < grid[row].length; col++){
          const node = grid[row][col];
-         currentRow.push(node)
+         const newNode = {...node}
+         currentRow.push(newNode)
+         
       }
       newGrid.push(currentRow)
    }
    newGrid[row][col].isWall = !newGrid[row][col].isWall;
+
    return newGrid;
 }
 
