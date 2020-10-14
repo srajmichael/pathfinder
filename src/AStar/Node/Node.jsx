@@ -122,6 +122,7 @@ const Node = (props) => {
          onMouseEnter={(e)=>{handleOnMouseEnter(row, col)}}
       >
          { (isStart || isEnd) && <span draggable onDrag={onSpanDrag}></span>}
+         {/* {(orderVisited || orderVisited === 0) && !isStart && !isEnd && orderVisited} */}
       </div>
    )
 }

@@ -125,12 +125,9 @@ class VisualizerContextComponent extends React.Component{
    }
 
    handleOnMouseUp = (row, col, grid) => {
-      if(!this.state.mouseDownDuringRunning){
-         if(this.state.mouseDownForStart){ this.updateStartNode(row,col,grid);}
-         if(this.state.mouseDownForEnd){ this.updateEndNode(row, col, grid); }
-         this.clearMouse();
-      }
-
+      if(this.state.mouseDownForStart){ this.updateStartNode(row,col,grid);}
+      if(this.state.mouseDownForEnd){ this.updateEndNode(row, col, grid); }
+      this.clearMouse();
    }
 
    handleOnMouseEnter = (row, col) => {
@@ -161,7 +158,7 @@ class VisualizerContextComponent extends React.Component{
    }
 
    updateStartNode = (row, col, currentGrid) => {
-      if(!this.state.grid[row][col].isWall){
+      if(!this.state.grid[row][col].isWall && !this.state.grid[row][col].isStart && !this.state.grid[row][col].isEnd){
          this.setState((prevState)=>{
             const newConf = {...prevState.config};
             newConf.startNodeRow = row;
@@ -176,7 +173,7 @@ class VisualizerContextComponent extends React.Component{
    }
 
    updateEndNode = (row, col, currentGrid) => {
-      if(!this.state.grid[row][col].isWall){
+      if(!this.state.grid[row][col].isWall && !this.state.grid[row][col].isStart && !this.state.grid[row][col].isEnd){
          this.setState((prevState)=>{
             const newConf = {...prevState.config};
             newConf.endNodeRow = row;

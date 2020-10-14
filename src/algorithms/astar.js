@@ -8,7 +8,7 @@ import {
 export function getAStarData(grid, startNode, endNode){
    const openNodes = [startNode];
    const closedNodes = [];
-   const orderVisited = [];
+   const orderVisited = [startNode];
 
    startNode.g = 0;
    startNode.h = getDistanceFromNode(startNode, endNode);
